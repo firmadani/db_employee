@@ -1,0 +1,59 @@
+<?php
+
+/*
+ * Implement hook_menu() 
+ */
+function mydesk_modal_menu(){
+  $items['mydesk/modal/%ctool_js/employee_add'] = array(
+    'page callback' => 'mydesk_modal',
+    'page arguments' => array(1,2),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Helper function to make a link.
+ */
+function _mymodule_make_link($link_text = '') {
+  // Set a default value if no text in supplied.
+  if (empty($link_text)) {
+    $link_text = 'Magical Modal';
+  }
+
+  return '<div id="magical-modal-link">' . l($link_text, 'mydesk/modal/nojs/employee_add', array('attributes' => array('class' => 'ctools-use-modal'))) . '</div>';
+}
+
+/**
+ *  * Ajax menu callback.
+ *   */
+function mydesk_modal($ajax,$form_target) {
+  if ($ajax) {
+    ctools_include('ajax');
+    ctools_include('modal');
+
+    $form_state = array(
+      'ajax' => TRUE,
+      'title' => t('MyModule Modal Form'),
+    );
+
+    // Use ctools to generate ajax instructions for the browser to create
+    // a form in a modal popup.
+    $output = ctools_modal_form_wrapper($form_target, $form_state);
+
+    // If the form has been submitted, there may be additional instructions
+    // such as dismissing the modal popup.
+    if (!empty($form_state['ajax_commands'])) {
+      $output = $form_state['ajax_commands'];
+    }
+
+    // Return the ajax instructions to the browser via ajax_render().
+    print ajax_render($output);
+    drupal_exit();
+  }
+  else {
+    return drupal_get_form($form_target);
+  }
+}

@@ -1,0 +1,97 @@
+<?php
+
+/*
+ * Implement hook_menu()
+ */
+function mydesk_employee_menu(){
+  $items['mydesk/employee'] = array(
+    'title' => 'Employee List',
+    'page callback' => 'employee_list',
+    'access callback' => TRUE,
+    'menu_name' => 'main-menu',
+    'weight' => 1,
+  );
+  $items['mydesk/employee/add'] = array(
+    'title' => 'Employee Add',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('employee_add'),
+    'access callback' => TRUE,
+    'file' => 'includes/employee_add_form.inc'
+  );
+  
+  return $items;
+}
+
+/*
+ * Page callback for Employee List page
+ */
+function employee_list(){
+  $query = db_select('mydesk_employee','e')
+    ->fields('e',array('eid','uid','username','email','fullname'));
+  $results = $query->execute();
+
+  $header = array(
+    t('Employee ID'),
+    t('User ID'),
+    t('Username'),
+    t('Email Address'),
+    t('Full Name'));
+
+  $rows = array();
+  foreach($results as $row){
+    $rows[] = array(
+      $row->eid,
+      $row->uid,
+      $row->username,
+      $row->email,
+      $row->fullname
+    );
+  }
+
+  $employee_table = theme_table(
+    array(
+      'header' => $header,
+      'rows' => $rows,
+      'empty' => t("No record(s)."),
+      'attributes' => array(
+        'id' => 'employee-table',
+        'class' => array('table')
+      ),
+      'caption' => '',
+      'colgroups' => array(),
+      'sticky' => TRUE,
+    )
+  );
+
+  ctools_include('modal');
+  ctools_modal_add_js();
+
+  $ajax_link =  _mymodule_make_link('Magical modal');
+
+  $menu = "<div class='menu-bar'><a href='/mydesk/employee/add'>Add Employee</a></div>";
+  $menu_form = drupal_get_form('header_menu');
+
+  return $ajax_link.$employee_table;
+}
+
+function header_menu($form,&$form_state){
+  $form['markup'] = array(
+    '#type' => 'markup',
+    '#markup' => '<a href="#">Add more</a>',
+    '#ajax' => array(
+      'callback' => 'show_add_employee',
+      'wrapper' => 'add_employee_wrapper',
+    ),
+  );
+
+  $form['add_employee_wrapper'] = array(
+    '#type' => 'markup',
+    '#markup' => '<div id="add_employee_wrapper"></div>', 
+  );
+
+  return $form;
+}
+
+function show_add_employee(){
+  return drupal_get_form('employee_add');
+}

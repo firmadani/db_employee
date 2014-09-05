@@ -1,0 +1,44 @@
+<?php
+
+/*
+ * Implement hook_schema()
+ */
+function mydesk_employee_schema(){
+  $schema['mydesk_employee'] = array(
+      'description' => 'Store employee data.',
+      'fields' => array(
+        'eid' => array(
+          'type' => 'serial',
+          'not null' => TRUE,
+          'description' => 'Primary Key of Employee table.'
+        ),
+        'uid' => array(
+          'type' => 'int',
+          'default' => 0,
+          'not null' => TRUE
+        ),
+        'username' => array(
+          'type' => 'varchar',
+          'length' => 12,
+          'not null' => TRUE
+        ),
+        'email' => array(
+          'type' => 'varchar',
+          'length' => 60,
+          'not null' => TRUE,
+        ),
+        'fullname' => array(
+            'type' => 'varchar',
+            'length' => 255,
+            'not null' => TRUE
+        ),
+      ),
+      'primary key' => array('eid'),
+      'indexes' => array(
+        'username' => array('username'),
+        'fullname' => array('fullname'),
+      ),
+  );
+
+    return $schema;
+}

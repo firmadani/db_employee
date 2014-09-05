@@ -1,0 +1,6 @@
+name = myDesk Modal
+description = Modal dialog for myDesk
+core = 7.x
+version = 1.0
+dependencies[]=ctools
+package  = myDesk
