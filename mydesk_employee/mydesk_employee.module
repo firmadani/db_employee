@@ -68,10 +68,10 @@ function employee_list(){
 
   $ajax_link =  _mymodule_make_link('Magical modal');
 
-  $menu = "<div class='menu-bar'><a href='/mydesk/employee/add'>Add Employee</a></div>";
+  $menu = "<div class='menu-bar'><a href='".base_path()."mydesk/employee/add'>Add Employee</a></div>";
   $menu_form = drupal_get_form('header_menu');
 
-  return $ajax_link.$employee_table;
+  return $menu.$employee_table;
 }
 
 function header_menu($form,&$form_state){
