@@ -26,16 +26,21 @@ function mydesk_employee_menu(){
  * Page callback for Employee List page
  */
 function employee_list(){
-  $query = db_select('mydesk_employee','e')
-    ->fields('e',array('eid','uid','username','email','fullname'));
-  $results = $query->execute();
 
   $header = array(
-    t('Employee ID'),
-    t('User ID'),
-    t('Username'),
-    t('Email Address'),
-    t('Full Name'));
+    'eid' => array('data' => t('Employee ID'), 'field' => 'e.eid'),
+    'uid' => array('data' => t('User ID'),'field' => 'e.uid'),
+    'username' => array('data' => t('Username'),'field' => 'e.username'),
+    'email' => array('data' => t('Email Address'),'field' => 'e.email'),
+    'fullname' => array('data' => t('Full Name'), 'field' => 'e.fullname')
+  );
+
+  $query = db_select('mydesk_employee','e')
+    ->fields('e',array('eid','uid','username','email','fullname'))
+    ->extend('PagerDefault')
+    ->extend('TableSort')
+    ->orderByHeader($header);
+  $results = $query->execute();
 
   $rows = array();
   foreach($results as $row){
