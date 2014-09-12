@@ -7,37 +7,45 @@ function mydesk_employee_schema(){
   $schema['mydesk_employee'] = array(
       'description' => 'Store employee data.',
       'fields' => array(
-        'eid' => array(
-          'type' => 'serial',
-          'not null' => TRUE,
-          'description' => 'Primary Key of Employee table.'
-        ),
-        'uid' => array(
-          'type' => 'int',
-          'default' => 0,
-          'not null' => TRUE
-        ),
-        'username' => array(
-          'type' => 'varchar',
-          'length' => 12,
-          'not null' => TRUE
-        ),
-        'email' => array(
-          'type' => 'varchar',
-          'length' => 60,
-          'not null' => TRUE,
-        ),
-        'fullname' => array(
-            'type' => 'varchar',
-            'length' => 255,
-            'not null' => TRUE
-        ),
+        'eid' => array( 'type' => 'serial', 'not null' => TRUE,),
+        'uid' => array( 'type' => 'int', 'default' => 0, 'not null' => TRUE),
+        'username' => array( 'type' => 'varchar', 'length' => 12, 'not null' => TRUE),
+        'email' => array( 'type' => 'varchar', 'length' => 60, 'not null' => TRUE,),
+        'fullname' => array( 'type' => 'varchar', 'length' => 255, 'not null' => TRUE),
+        'address1' => array('type' => 'varchar','length' => 255, 'not null' => TRUE),
+        'address2' => array('type' => 'varchar','length' => 255, 'not null' => TRUE),
+        'postcode' => array('type' => 'varchar','length' => 6, 'not null' => TRUE),
+        'phone' => array('type' => 'varchar','length' => 6, 'not null' => TRUE),
+        'created' => array( 'type' => 'varchar', 'length' => 11, 'not null' => TRUE, 'default' => '0000-00-00',),
+        'updated' => array('type' => 'varchar', 'length' => 11,'not null' => TRUE, 'default' => '0000-00-00'),
       ),
       'primary key' => array('eid'),
-      'indexes' => array(
-        'username' => array('username'),
-        'fullname' => array('fullname'),
+      'indexes' => array( 'username' => array('username'), 'fullname' => array('fullname'),
       ),
+  );
+
+  $schema['mydesk_city'] = array(
+      'description' => 'Store City data',
+      'fields' => array(
+        'city_id' => array( 'type' => 'serial', 'not null' => TRUE, 'description' => 'City identifier',),
+        'city' => array( 'type' => 'varchar', 'length' => 60, 'not null' => TRUE,),
+        'country_id' => array( 'type' => 'int', 'not null' => TRUE, 'length' => 2),
+        'updated' => array( 'type' => 'varchar', 'length' => 11, 'not null' => TRUE,),
+      ),
+      'primary key' => array('city_id'),
+      'indexes' => array( 'city' => array('city'),),
+    );
+
+  $schema['mydesk_country'] = array(
+    'description' => 'Store country data',
+    'fields' => array(
+      'country_id' => array( 'type' => 'serial', 'length' => 60, 'not null' => TRUE,),
+      'country' => array( 'type' => 'varchar', 'length' => 60, 'not null' => TRUE,),
+      'updated' => array( 'type' => 'varchar', 'length' => 11, 'not null' => TRUE, 'default' => '0000-00-00',),
+    ),
+    'primary key' => array('country_id'),
+    'indexes' => array('country' => array('country')),
+    
   );
 
     return $schema;

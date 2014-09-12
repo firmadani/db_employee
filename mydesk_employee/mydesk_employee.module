@@ -68,24 +68,21 @@ function employee_list(){
     )
   );
 
-  ctools_include('modal');
-  ctools_modal_add_js();
-
-  $ajax_link =  _mymodule_make_link('Magical modal');
-
   $menu = "<div class='menu-bar'><a href='".base_path()."mydesk/employee/add'>Add Employee</a></div>";
-  $menu_form = drupal_get_form('header_menu');
+  $add_employee_form = drupal_get_form('header_menu');
 
-  return $menu.$employee_table;
+  return render($add_employee_form).$employee_table;
 }
 
 function header_menu($form,&$form_state){
   $form['markup'] = array(
-    '#type' => 'markup',
-    '#markup' => '<a href="#">Add more</a>',
+    '#type' => 'button',
+    '#value' => 'Add employee',
     '#ajax' => array(
       'callback' => 'show_add_employee',
       'wrapper' => 'add_employee_wrapper',
+      'method' => 'html',
+      'effect' => 'fade',
     ),
   );
 
@@ -99,4 +96,64 @@ function header_menu($form,&$form_state){
 
 function show_add_employee(){
   return drupal_get_form('employee_add');
+}
+
+/*
+ * Form add employee
+ */
+function employee_add($form,&$form_state){
+  $form['uid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('User ID'),
+    '#size' => 5,
+    '#required' => TRUE,
+  );
+  $form['username'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Username'),
+    '#size' => 30,
+    '#required' => TRUE,
+  );
+  $form['email'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Email Address'),
+    '#size' => 30,
+    '#required' => TRUE,
+  );
+  $form['fullname'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Full Name'),
+    '#size' => 30,
+    '#required' => TRUE,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+  );
+
+  $form['#action'] = url('mydesk/employee/add');
+
+  return $form;
+
+} 
+
+/*
+ * Implement hook_submit();
+ */
+function employee_add_submit($form,&$form_state){
+
+  $fields = array(
+    'uid' => $form_state['values']['uid'],
+    'username' => $form_state['values']['username'],
+    'email' => $form_state['values']['email'],
+    'fullname' => $form_state['values']['fullname'],
+  );
+
+  db_insert('mydesk_employee')
+    ->fields($fields)
+    ->execute();
+
+  drupal_set_message("Data successfuly added.","info");
+
+  $form_state['redirect'] = '/mydesk/employee';
 }
