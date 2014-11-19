@@ -28,38 +28,45 @@ function mydesk_employee_menu(){
 function employee_list(){
 
   $header = array(
-    'eid' => array('data' => t('Employee ID'), 'field' => 'e.eid'),
-    'uid' => array('data' => t('User ID'),'field' => 'e.uid'),
-    'username' => array('data' => t('Username'),'field' => 'e.username'),
-    'email' => array('data' => t('Email Address'),'field' => 'e.email'),
-    'fullname' => array('data' => t('Full Name'), 'field' => 'e.fullname')
+    'staff_id' => array('data' => t('Staff ID'), 'field' => 's.staff_id'),
+    'fullname' => array('data' => t('Fullname'),'field' => 's.fullname'),
+    'city' => array('data' => t('City'),'field' => 's.city'),
+    'province' => array('data' => t('Province'), 'field' => 's.province'),
+    'country' => array('data' => t('Country'), 'field' => 's.country'),
+    'postcode' => array('data' => t('Postcode'), 'field' => 's.postcode'),
+    'email' => array('data' => t('Email'), 'field' => 's.email'),
+    'phone' => array('data' => t('Phone'), 'field' => 's.phone')
   );
 
-  $query = db_select('mydesk_employee','e')
-    ->fields('e',array('eid','uid','username','email','fullname'))
+  $query = db_select('mydesk_staff','s')
+    ->fields('s',array('staff_id','fullname','city','province','country','postcode','email','phone'))
     ->extend('PagerDefault')
     ->extend('TableSort')
-    ->orderByHeader($header);
+    ->orderByHeader($header)
+    ->limit(15);
   $results = $query->execute();
 
   $rows = array();
   foreach($results as $row){
     $rows[] = array(
-      $row->eid,
-      $row->uid,
-      $row->username,
+      $row->staff_id,
+      $row->fullname,
+      $row->city,
+      $row->province,
+      $row->country,
+      $row->postcode,
       $row->email,
-      $row->fullname
+      $row->phone,
     );
   }
 
-  $employee_table = theme_table(
+  $staff_table = theme_table(
     array(
       'header' => $header,
       'rows' => $rows,
       'empty' => t("No record(s)."),
       'attributes' => array(
-        'id' => 'employee-table',
+        'id' => 'staff-table',
         'class' => array('table')
       ),
       'caption' => '',
@@ -69,15 +76,19 @@ function employee_list(){
   );
 
   $menu = "<div class='menu-bar'><a href='".base_path()."mydesk/employee/add'>Add Employee</a></div>";
-  $add_employee_form = drupal_get_form('header_menu');
+  $add_staff_form = drupal_get_form('header_menu');
 
-  return render($add_employee_form).$employee_table;
+  // Paging
+  $args = array('tags' => array('first','prev','','next','last'));
+  $pager = theme('pager',$args);
+
+  return render($add_staff_form).$staff_table.$pager;
 }
 
 function header_menu($form,&$form_state){
   $form['markup'] = array(
     '#type' => 'button',
-    '#value' => 'Add employee',
+    '#value' => 'Add Staff',
     '#ajax' => array(
       'callback' => 'show_add_employee',
       'wrapper' => 'add_employee_wrapper',
@@ -102,18 +113,6 @@ function show_add_employee(){
  * Form add employee
  */
 function employee_add($form,&$form_state){
-  $form['uid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('User ID'),
-    '#size' => 5,
-    '#required' => TRUE,
-  );
-  $form['username'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Username'),
-    '#size' => 30,
-    '#required' => TRUE,
-  );
   $form['email'] = array(
     '#type' => 'textfield',
     '#title' => t('Email Address'),
@@ -123,12 +122,49 @@ function employee_add($form,&$form_state){
   $form['fullname'] = array(
     '#type' => 'textfield',
     '#title' => t('Full Name'),
-    '#size' => 30,
+    '#size' => 60,
     '#required' => TRUE,
   );
-  $form['submit'] = array(
+  $form['city'] = array(
+    '#type' => 'textfield',
+    '#title' => t('City'),
+    '#size' => 60,
+    '#required' => FALSE,
+  );
+  $form['province'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Province'),
+    '#size' => 60,
+    '#required' => FALSE,
+  );
+  $form['country'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Country'),
+    '#size' => 60,
+    '#required' => FALSE,
+  );
+  $form['postcode'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Postcode'),
+    '#size' => 6,
+    '#maxlength' => 6,
+  );
+  $form['phone'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Phone'),
+    '#size' => 15,
+    '#maxlength' => 15,
+  );
+  $form['created'] = array(
+    '#type' => 'hidden',
+    '#default_value' => time(),
+  );
+  $form['action']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
+  );
+  $form['action']['cancel'] = array(
+    '#markup' => l(t('Cancel'), 'foo/bar'),
   );
 
   $form['#action'] = url('mydesk/employee/add');
@@ -143,13 +179,18 @@ function employee_add($form,&$form_state){
 function employee_add_submit($form,&$form_state){
 
   $fields = array(
-    'uid' => $form_state['values']['uid'],
-    'username' => $form_state['values']['username'],
     'email' => $form_state['values']['email'],
     'fullname' => $form_state['values']['fullname'],
+    'city' => $form_state['values']['city'],
+    'province' => $form_state['values']['province'],
+    'country' => $form_state['values']['country'],
+    'postcode' => $form_state['values']['postcode'],
+    'phone' => $form_state['values']['phone'],
+    'created' => $form_state['values']['created'],
+
   );
 
-  db_insert('mydesk_employee')
+  db_insert('mydesk_staff')
     ->fields($fields)
     ->execute();
 
