@@ -1,5 +1,6 @@
 name = myDesk Employee
 description = Employee management module, user can add,view,edit and delete employees data.
 core = 7.x
-version = 1.0
 package = myDesk
+dependencies[] = date_popup
+stylesheets[all][] = css/mydesk.css

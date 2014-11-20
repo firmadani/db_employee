@@ -1,5 +1,7 @@
 <?php
 
+drupal_add_css(drupal_get_path('module', 'mydesk_employee') . '/css/mydesk.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+
 /*
  * Implement hook_menu()
  */
@@ -10,191 +12,32 @@ function mydesk_employee_menu(){
     'access callback' => TRUE,
     'menu_name' => 'main-menu',
     'weight' => 1,
+    'file' => 'includes/employee.inc'
   );
   $items['mydesk/employee/add'] = array(
     'title' => 'Employee Add',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('employee_add'),
     'access callback' => TRUE,
-    'file' => 'includes/employee_add_form.inc'
+    'file' => 'includes/employee.inc'
+  );
+  $items['mydesk/departement'] = array(
+    'title' => 'Departement List',
+    'page callback' => 'departement_list',
+    'access callback' => TRUE,
+    'menu_name' => 'main-menu',
+    'weight' => 1,
+    'file' => 'includes/departement.inc'
+  );
+  $items['mydesk/departement/add'] = array(
+    'title' => 'Departement Add',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('departement_add_form'),
+    'access callback' => TRUE,
+    'file' => 'includes/departement.inc'
   );
   
   return $items;
 }
 
-/*
- * Page callback for Employee List page
- */
-function employee_list(){
 
-  $header = array(
-    'staff_id' => array('data' => t('Staff ID'), 'field' => 's.staff_id'),
-    'fullname' => array('data' => t('Fullname'),'field' => 's.fullname'),
-    'city' => array('data' => t('City'),'field' => 's.city'),
-    'province' => array('data' => t('Province'), 'field' => 's.province'),
-    'country' => array('data' => t('Country'), 'field' => 's.country'),
-    'postcode' => array('data' => t('Postcode'), 'field' => 's.postcode'),
-    'email' => array('data' => t('Email'), 'field' => 's.email'),
-    'phone' => array('data' => t('Phone'), 'field' => 's.phone')
-  );
-
-  $query = db_select('mydesk_staff','s')
-    ->fields('s',array('staff_id','fullname','city','province','country','postcode','email','phone'))
-    ->extend('PagerDefault')
-    ->extend('TableSort')
-    ->orderByHeader($header)
-    ->limit(15);
-  $results = $query->execute();
-
-  $rows = array();
-  foreach($results as $row){
-    $rows[] = array(
-      $row->staff_id,
-      $row->fullname,
-      $row->city,
-      $row->province,
-      $row->country,
-      $row->postcode,
-      $row->email,
-      $row->phone,
-    );
-  }
-
-  $staff_table = theme_table(
-    array(
-      'header' => $header,
-      'rows' => $rows,
-      'empty' => t("No record(s)."),
-      'attributes' => array(
-        'id' => 'staff-table',
-        'class' => array('table')
-      ),
-      'caption' => '',
-      'colgroups' => array(),
-      'sticky' => TRUE,
-    )
-  );
-
-  $menu = "<div class='menu-bar'><a href='".base_path()."mydesk/employee/add'>Add Employee</a></div>";
-  $add_staff_form = drupal_get_form('header_menu');
-
-  // Paging
-  $args = array('tags' => array('first','prev','','next','last'));
-  $pager = theme('pager',$args);
-
-  return render($add_staff_form).$staff_table.$pager;
-}
-
-function header_menu($form,&$form_state){
-  $form['markup'] = array(
-    '#type' => 'button',
-    '#value' => 'Add Staff',
-    '#ajax' => array(
-      'callback' => 'show_add_employee',
-      'wrapper' => 'add_employee_wrapper',
-      'method' => 'html',
-      'effect' => 'fade',
-    ),
-  );
-
-  $form['add_employee_wrapper'] = array(
-    '#type' => 'markup',
-    '#markup' => '<div id="add_employee_wrapper"></div>', 
-  );
-
-  return $form;
-}
-
-function show_add_employee(){
-  return drupal_get_form('employee_add');
-}
-
-/*
- * Form add employee
- */
-function employee_add($form,&$form_state){
-  $form['email'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Email Address'),
-    '#size' => 30,
-    '#required' => TRUE,
-  );
-  $form['fullname'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Full Name'),
-    '#size' => 60,
-    '#required' => TRUE,
-  );
-  $form['city'] = array(
-    '#type' => 'textfield',
-    '#title' => t('City'),
-    '#size' => 60,
-    '#required' => FALSE,
-  );
-  $form['province'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Province'),
-    '#size' => 60,
-    '#required' => FALSE,
-  );
-  $form['country'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Country'),
-    '#size' => 60,
-    '#required' => FALSE,
-  );
-  $form['postcode'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Postcode'),
-    '#size' => 6,
-    '#maxlength' => 6,
-  );
-  $form['phone'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Phone'),
-    '#size' => 15,
-    '#maxlength' => 15,
-  );
-  $form['created'] = array(
-    '#type' => 'hidden',
-    '#default_value' => time(),
-  );
-  $form['action']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save'),
-  );
-  $form['action']['cancel'] = array(
-    '#markup' => l(t('Cancel'), 'foo/bar'),
-  );
-
-  $form['#action'] = url('mydesk/employee/add');
-
-  return $form;
-
-} 
-
-/*
- * Implement hook_submit();
- */
-function employee_add_submit($form,&$form_state){
-
-  $fields = array(
-    'email' => $form_state['values']['email'],
-    'fullname' => $form_state['values']['fullname'],
-    'city' => $form_state['values']['city'],
-    'province' => $form_state['values']['province'],
-    'country' => $form_state['values']['country'],
-    'postcode' => $form_state['values']['postcode'],
-    'phone' => $form_state['values']['phone'],
-    'created' => $form_state['values']['created'],
-
-  );
-
-  db_insert('mydesk_staff')
-    ->fields($fields)
-    ->execute();
-
-  drupal_set_message("Data successfuly added.","info");
-
-  $form_state['redirect'] = '/mydesk/employee';
-}

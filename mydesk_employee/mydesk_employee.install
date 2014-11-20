@@ -4,23 +4,23 @@
  * Implement hook_schema()
  */
 function mydesk_employee_schema(){
-  $schema['mydesk_staff'] = array(
-      'description' => 'Store staff data.',
+  $schema['mydesk_employee'] = array(
+      'description' => 'Store employee data.',
       'fields' => array(
-        'staff_id' => array( 'type' => 'serial', 'not null' => TRUE,),
+        'employee_id' => array( 'type' => 'serial', 'not null' => TRUE,),
         'fullname' => array( 'type' => 'varchar', 'length' => 255, 'not null' => TRUE),
         'city' => array('type' => 'varchar','length' => 255, 'not null' => TRUE),
         'province' => array('type' => 'varchar','length' => 255, 'not null' => TRUE),
         'country' => array('type' => 'varchar','length' => 255, 'not null' => TRUE),
         'postcode' => array('type' => 'varchar','length' => 6, 'not null' => TRUE),
         'email' => array( 'type' => 'varchar', 'length' => 60, 'not null' => TRUE,),
-        'phone' => array('type' => 'varchar','length' => 6, 'not null' => TRUE),
+        'phone' => array('type' => 'varchar','length' => 16, 'not null' => TRUE),
         'job' => array('type' => 'int','length' => 5),
         'departement' => array('type' => 'int','length' => 5),
-        'created' => array( 'type' => 'int', 'length' => 11, 'not null' => TRUE),
-        'changed' => array('type' => 'int', 'length' => 11,'not null' => TRUE),
+        'created' => array( 'type' => 'int', 'length' => 11, 'not null' => TRUE,'default' => time()),
+        'changed' => array('type' => 'int', 'length' => 11,'not null' => TRUE,'default' => time()),
       ),
-      'primary key' => array('staff_id'),
+      'primary key' => array('employee_id'),
       'indexes' => array('fullname' => array('fullname')),
       'foreign keys' => array(
         'job' => array(
@@ -37,13 +37,23 @@ function mydesk_employee_schema(){
   $schema['mydesk_departement'] = array(
       'description' => 'Departement data',
       'fields' => array(
-        'dept_id' => array( 'type' => 'serial', 'description' => 'Departement identifier',),
-        'dept_name' => array( 'type' => 'varchar', 'length' => 60, 'not null' => TRUE,),
-        'created' => array( 'type' => 'int', 'length' => 11, 'not null' => TRUE,),
-        'changed' => array( 'type' => 'int', 'length' => 11, 'not null' => TRUE,),
+        'dept_id' => array( 'type' => 'serial', 'description' => 'Departement identifier'),
+        'dept_name' => array( 'type' => 'varchar', 'length' => 255, 'not null' => TRUE),
+        'dept_desc' => array( 'type' => 'text','not null' => TRUE),
+        'dept_location' => array( 'type' => 'varchar', 'length' => 255,'not null' => TRUE),
+        'dept_phone' => array( 'type' => 'varchar', 'length' => 15,'not null' => TRUE),
+        'dept_head' => array( 'type' => 'int', 'length' => 3,'not null' => TRUE),
+        'created' => array( 'type' => 'int', 'length' => 11,'not null' => TRUE,'default' => time()),
+        'changed' => array( 'type' => 'int', 'length' => 11,'not null' => TRUE,'default' => time()),
       ),
       'primary key' => array('dept_id'),
-      'indexes' => array( 'dept_name' => array('dept_name'),),
+      'indexes' => array( 'dept_name' => array('dept_name')),
+      'foreign keys' => array(
+        'dept_head' => array(
+          'table' => 'mydesk_employee',
+          'columns' => array('dept_head' => 'employee_id'),
+        ),
+      ),     
     );
 
   $schema['mydesk_job'] = array(
@@ -52,23 +62,23 @@ function mydesk_employee_schema(){
       'job_id' => array( 'type' => 'serial'),
       'job_role' => array( 'type' => 'varchar', 'length' => 60, 'not null' => TRUE,),
       'job_description' => array('type' => 'text'),
-      'created' => array( 'type' => 'int', 'length' => 11, 'not null' => TRUE,),
-      'changed' => array( 'type' => 'int', 'length' => 11, 'not null' => TRUE,),
+      'created' => array( 'type' => 'int', 'length' => 11, 'not null' => TRUE,'default' => time()),
+      'changed' => array( 'type' => 'int', 'length' => 11, 'not null' => TRUE,'default' => time()),
     ),
     'primary key' => array('job_id'),
     'indexes' => array('job_role' => array('job_role')),
   );
 
   $schema['mydesk_employment'] = array(
-    'description' => 'Store employment data of all staff',
+    'description' => 'Store employment data of all employee',
     'fields' => array(
       'emp_id' => array('type' => 'serial'),
       'job_id' => array('type' => 'int'),
-      'staff_id' => array('type' => 'int'),
+      'employee_id' => array('type' => 'int'),
       'start_date' => array('type' => 'int', 'length' => 11),
       'end_date' => array('type' => 'int', 'length' => 11),
-      'created' => array('type' => 'int', 'length' => 11),
-      'changed' => array('type' => 'int', 'length' => 11),
+      'created' => array('type' => 'int', 'length' => 11,'default' => time()),
+      'changed' => array('type' => 'int', 'length' => 11,'default' => time()),
     ),
     'primary key' => array('emp_id'),
   );
