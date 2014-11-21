@@ -80,7 +80,9 @@ function mydesk_employee_block_info() {
   $blocks = array();
   $blocks['mydesk_statistic'] = array(
     'info' => t('myDesk Statistic'),
-    'region' => ''
+    'region' => 'header',
+    'visibility' => BLOCK_VISIBILITY_NOTLISTED,
+    'pages' => ''
   );
   return $blocks;
 }
@@ -103,6 +105,15 @@ function mydesk_employee_block_view($delta = '') {
  * Block content
  */
 function _mydesk_statistic() {
-  $output = t('Hello world');
+
+  $total_employees = db_query("SELECT * FROM {mydesk_employee}")->rowCount();
+  $total_departements = db_query("SELECT * FROM {mydesk_departement}")->rowCount();
+  
+  $output = '<table class="table table-bordered"><tr>';
+  $output .= '<td class="col-md-3"><strong>Total Statistic</strong></td>';
+  $output .= '<td class="col-md-3"><h2>'.$total_employees.'</h2><p>Employees</p></td>';
+  $output .= '<td class="col-md-3"><h2>'.$total_departements.'</h2><p>Departements</p></td>';
+  $output .= '</tr></table>';
+
   return $output;
 }
