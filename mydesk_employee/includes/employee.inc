@@ -61,7 +61,8 @@ function employee_list(){
   $pager = theme('pager',$args);
 
   //return render($add_employee_form).$employee_table.$pager;
-  return $menu.$employee_table.$pager;
+  //return $menu.$employee_table.$pager;
+  return $employee_table;
 }
 
 function employee_header_menu($form,&$form_state){

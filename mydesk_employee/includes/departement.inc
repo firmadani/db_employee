@@ -59,7 +59,8 @@ function departement_list(){
   $pager = theme('pager',$args);
 
   //return render($add_employee_form).$employee_table.$pager;
-  return $menu.$departement_table.$pager;
+  //return $menu.$departement_table.$pager;
+  return $departement_table;
 }
 
 /*
