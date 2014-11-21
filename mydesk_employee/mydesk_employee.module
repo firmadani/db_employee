@@ -50,4 +50,59 @@ function mydesk_employee_views_api(){
   );
 }
 
+/*
+ * Implement hook_admin_paths
+ */
+function mydesk_employee_admin_paths() {
+  $paths = array(
+    'mydesk/*/add' => TRUE, 
+  );
 
+  return $paths;
+}
+
+/*
+ * Implement hook_overlay_paths()
+ */
+function mydesk_employee_overlay_paths() {
+  $paths = array(
+    'mydesk/*/add' => array(
+      'width' => 500,
+    ),
+  );
+  return $paths;
+}
+
+/*
+ * Implements hook_block_info().
+ */
+function mydesk_employee_block_info() {
+  $blocks = array();
+  $blocks['mydesk_statistic'] = array(
+    'info' => t('myDesk Statistic'),
+    'region' => ''
+  );
+  return $blocks;
+}
+
+/*
+ * Implements hook_block_view().
+ */
+function mydesk_employee_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+  case 'mydesk_statistic':
+    $block['subject'] = '';
+    $block['content'] = _mydesk_statistic();
+    break;
+  }
+  return $block;
+}
+
+/*
+ * Block content
+ */
+function _mydesk_statistic() {
+  $output = t('Hello world');
+  return $output;
+}
