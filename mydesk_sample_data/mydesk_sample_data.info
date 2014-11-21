@@ -1,0 +1,5 @@
+name = myDesk Sample Data
+description = Sample data for myDesk 
+core = 7.x
+package = myDesk
+dependencies[] = mydesk_employee

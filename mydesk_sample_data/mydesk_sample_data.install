@@ -1,0 +1,91 @@
+<?php
+
+  // Define data sample.
+  global $employee_data, $departement_data;
+
+  $employee_data = array(
+    array(
+      'fullname' => 'Iwan Wirawan',
+      'city' => 'Bogor',
+      'province' => 'West Java',
+      'country' => 'Indonesia', 
+      'postcode' => '16112',
+      'email' => 'iwan@gmail.com',
+      'phone' => '08562222222'
+    ),
+    array(
+      'fullname' => 'Mahfud MD',
+      'city' => 'Surabaya',
+      'province' => 'East Java',
+      'country' => 'Indonesia', 
+      'postcode' => '16112',
+      'email' => 'mahfud@yahoo.com',
+      'phone' => '0898888888'
+    ),
+    array(
+      'fullname' => 'Suratman',
+      'city' => 'Sukabumi',
+      'province' => 'West Java',
+      'country' => 'Indonesia', 
+      'postcode' => '18221',
+      'email' => 'suratman@tokobesi.com',
+      'phone' => '082100012312'
+    ),
+    array(
+      'fullname' => 'Raja Badar',
+      'city' => 'Medan',
+      'province' => 'West Sumatera',
+      'country' => 'Indonesia', 
+      'postcode' => '11123',
+      'email' => 'r.badar@m-kinetic.com',
+      'phone' => '089912312312'
+    ),
+    array(
+      'fullname' => 'Solehudin Salam',
+      'city' => 'Serang',
+      'province' => 'Banten',
+      'country' => 'Indonesia', 
+      'postcode' => '13123',
+      'email' => 's.salam@yahoo.co.uk',
+      'phone' => '0856123123'
+    ),
+    array(
+      'fullname' => 'Taufiq Silalahi',
+      'city' => 'Bireun',
+      'province' => 'Aceh Utara',
+      'country' => 'Indonesia', 
+      'postcode' => '19123',
+      'email' => 'taufiq.s@hotmail.com',
+      'phone' => '0823123123'
+    ),
+  );
+/*
+ * Implement hook_install
+ */
+function mydesk_sample_data_install() {
+
+  global $employee_data;
+
+  foreach($employee_data as $fields){
+    db_insert('mydesk_employee')
+      ->fields($fields)
+      ->execute();
+  }
+}
+
+/*
+ * Implement hook_uninstall
+ */
+function mydesk_sample_data_uninstall(){
+
+  global $employee_data;
+
+  foreach($employee_data as $fields){
+    db_delete('mydesk_employee')
+      ->condition('fullname', $fields['fullname'])
+      ->condition('email', $fields['email'])
+      ->execute();
+  }
+}
+
+
