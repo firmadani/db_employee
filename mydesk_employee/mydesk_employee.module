@@ -40,4 +40,14 @@ function mydesk_employee_menu(){
   return $items;
 }
 
+/*
+ * Implemenet hook_views_api
+ */
+function mydesk_employee_views_api(){
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module','mydesk_employee') . '/includes',
+  );
+}
+
 

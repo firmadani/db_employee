@@ -14,8 +14,10 @@ function departement_list(){
     'dept_head' => array('data' => t('Dept. Head'), 'field' => 'd.dept_head'),
   );
 
-  $query = db_select('mydesk_departement','d')
-    ->fields('d',array('dept_id','dept_name','dept_desc','dept_location','dept_phone','dept_head'))
+  $query = db_select('mydesk_departement','d');
+  $query->join('mydesk_employee', 'e', 'd.dept_head = e.employee_id');
+  $query->fields('d',array('dept_id','dept_name','dept_desc','dept_location','dept_phone','dept_head'))
+    ->fields('e', array('fullname'))
     ->extend('PagerDefault')
     ->extend('TableSort')
     ->orderByHeader($header)
@@ -30,7 +32,7 @@ function departement_list(){
       $row->dept_desc,
       $row->dept_location,
       $row->dept_phone,
-      $row->dept_head,
+      $row->fullname,
     );
   }
 
