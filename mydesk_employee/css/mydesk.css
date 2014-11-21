@@ -1,1 +1,7 @@
-form#employee-add {padding:20px;border:1px solid #e2e2e2;}
+#overlay-content form {padding:20px;border:1px solid #e2e2e2;margin: 20px 0;}
+#overlay {width:auto !important;margin-top:50px;}
+#overlay #overlay-title {padding: 10px; background: #fff; color: #3F3F3F; border-top-left-radius: 5px; border-top-right-radius: 5px;background: linear-gradient(#e2e2e2, #ffffff 40%);font-size:18px;font-weight:bold;}
+#overlay-content header, #overlay-content footer, #overlay-content .breadcrumb, #overlay-content .page-header {display:none;}
+#overlay #overlay-content {border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;}
+#overlay .container {width:700px;}
+input.error {color: #b94a48 !important;border-color: #FF0029 !important;}
