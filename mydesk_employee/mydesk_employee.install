@@ -85,3 +85,24 @@ function mydesk_employee_schema(){
 
     return $schema;
 }
+
+/*
+ * Implement hook_install()
+ */
+function mydesk_employee_install(){
+
+  /*
+   * Setup default front page
+   */
+  variable_set('site_frontpage', 'mydesk/employee');
+}
+
+/*
+ * Implement hook_uninstall()
+ */ 
+function mydesk_employee_uninstall(){
+  /*
+   * Setup default front page
+   */
+  variable_set('site_frontpage', 'node');
+}
